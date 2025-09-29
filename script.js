@@ -1,4 +1,4 @@
-        // 全局变量
+        // 全局
         let currentPage = 'home'; // 当前页面
 
 
