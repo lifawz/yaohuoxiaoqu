@@ -2,7 +2,6 @@
         let currentPage = 'home'; // 当前页面
 
 
-
         // 页面切换功能
         function showPage(pageId) {
             // 隐藏所有页面并显示目标页面
