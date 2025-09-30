@@ -3432,7 +3432,8 @@
             document.getElementById('item-detail-server').textContent = item.server;
             document.getElementById('item-detail-contact').textContent = item.contact;
             document.getElementById('item-detail-seller').textContent = item.nickname;
-            document.getElementById('item-detail-time').textContent = formatDateTime(item.expireTime);
+            // 显示发布时间而不是到期时间
+            document.getElementById('item-detail-time').textContent = formatDateTime(item.shelfTime || item.createTime);
 
             // 设置浏览量
             const viewCountElement = document.getElementById('item-detail-views');
@@ -4307,12 +4308,7 @@
                     const contentEl = document.querySelector(`[data-content-id="notice-${notice.id}"]`);
                     if (contentEl) {
                         // 检测内容是否被截断（scrollHeight大于clientHeight说明有内容被隐藏）
-                        const scrollH = contentEl.scrollHeight;
-                        const clientH = contentEl.clientHeight;
-                        const isOverflowing = scrollH > clientH;
-                        
-                        // 调试输出
-                        console.log(`通知${notice.id}: scrollHeight=${scrollH}, clientHeight=${clientH}, isOverflowing=${isOverflowing}`);
+                        const isOverflowing = contentEl.scrollHeight > contentEl.clientHeight;
                         
                         if (isOverflowing) {
                             contentEl.classList.add('truncated');
@@ -6689,12 +6685,10 @@
         function formatDateTime(dateString) {
             const date = new Date(dateString);
 
-            // 后端保存的时间已经是北京时间+8小时的ISO字符串
-            // 所以我们需要减去8小时来显示正确的北京时间
-            const correctedDate = new Date(date.getTime() - (8 * 60 * 60 * 1000));
-
+            // 后端保存的时间已经是北京时间（UTC+8）
+            // 直接格式化显示即可
             // 显示完整的年月日时分秒格式：2025-09-21 23:35:21
-            return correctedDate.toLocaleString('zh-CN', {
+            return date.toLocaleString('zh-CN', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
