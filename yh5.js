@@ -218,15 +218,13 @@
             }
         }
 
-        // 更新日期
+        // 更新日期（使用本地时间即可）
         function updateDate() {
             const now = new Date();
-            // 转换为北京时间 (UTC+8)
-            const beijingTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
             
-            const year = beijingTime.getUTCFullYear();
-            const month = String(beijingTime.getUTCMonth() + 1).padStart(2, '0');
-            const day = String(beijingTime.getUTCDate()).padStart(2, '0');
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
             
             document.getElementById('currentDate').textContent = `${year}-${month}-${day}`;
         }
@@ -495,12 +493,10 @@
             dateSelect.innerHTML = '';
             const today = new Date();
 
-            // 将当前时间设置为中国时区
-            const beijingTime = new Date(today.toLocaleString("en-US", { timeZone: "Asia/Shanghai" }));
-
+            // 使用本地时间即可
             for (let i = 0; i < 3; i++) {
-                const tempDate = new Date(beijingTime);
-                tempDate.setDate(beijingTime.getDate() - i);
+                const tempDate = new Date(today);
+                tempDate.setDate(today.getDate() - i);
                 const yyyy = tempDate.getFullYear();
                 const mm = String(tempDate.getMonth() + 1).padStart(2, '0');
                 const dd = String(tempDate.getDate()).padStart(2, '0');
@@ -5155,19 +5151,24 @@
         // 更新签到按钮状态
         function updateCheckinButton() {
             const checkinBtn = document.getElementById('checkin-btn');
-            // 使用北京时间
+            // 获取今天日期
             const now = new Date();
-            const beijingTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
-            const today = beijingTime.toISOString().split('T')[0];
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const today = `${year}-${month}-${day}`;
+            
             let lastCheckin = '';
             if (currentUser.last_checkin) {
                 if (typeof currentUser.last_checkin === 'string') {
                     // 处理字符串格式的时间，提取日期部分
                     lastCheckin = currentUser.last_checkin.split('T')[0].split(' ')[0];
                 } else if (currentUser.last_checkin instanceof Date) {
-                    // 处理Date对象，转换为北京时间
-                    const beijingTime = new Date(currentUser.last_checkin.getTime() + (8 * 60 * 60 * 1000));
-                    lastCheckin = beijingTime.toISOString().split('T')[0];
+                    // 处理Date对象
+                    const y = currentUser.last_checkin.getFullYear();
+                    const m = String(currentUser.last_checkin.getMonth() + 1).padStart(2, '0');
+                    const d = String(currentUser.last_checkin.getDate()).padStart(2, '0');
+                    lastCheckin = `${y}-${m}-${d}`;
                 }
             }
 
@@ -6683,20 +6684,39 @@
 
         // 格式化日期时间
         function formatDateTime(dateString) {
+            if (!dateString) return '';
+            
+            // 数据库返回的已经是北京时间字符串，直接显示即可
+            // 格式可能是 "2025-09-21 23:35:21" 或 "2025-09-21T23:35:21"
+            let timeStr = dateString.toString();
+            
+            // 如果包含T，替换为空格
+            if (timeStr.includes('T')) {
+                timeStr = timeStr.replace('T', ' ');
+            }
+            
+            // 如果包含.000Z或Z，去掉
+            timeStr = timeStr.replace(/\.000Z?$/g, '');
+            
+            // 如果格式正确（YYYY-MM-DD HH:mm:ss），直接返回
+            if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(timeStr)) {
+                return timeStr;
+            }
+            
+            // 否则尝试解析并格式化
             const date = new Date(dateString);
-
-            // 后端保存的时间已经是北京时间（UTC+8）
-            // 直接格式化显示即可
-            // 显示完整的年月日时分秒格式：2025-09-21 23:35:21
-            return date.toLocaleString('zh-CN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            }).replace(/\//g, '-');
+            if (isNaN(date.getTime())) {
+                return dateString; // 无法解析，返回原字符串
+            }
+            
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
 
         // 显示题目列表
