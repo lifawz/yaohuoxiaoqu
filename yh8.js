@@ -159,7 +159,7 @@
         // 初始化导航栏显示
         function initNavigationDisplay() {
             const topNav = document.querySelector('.top-nav');
-            const isDesktop = window.innerWidth > 768;
+			let isDesktop = window.innerWidth > 768;
 
             if (isDesktop && topNav) {
                 // 延迟显示顶部导航栏，创建平滑的进入动画
@@ -171,9 +171,16 @@
             // 监听窗口大小变化
             window.addEventListener('resize', function() {
                 const newIsDesktop = window.innerWidth > 768;
-                if (newIsDesktop !== isDesktop) {
-                    location.reload(); // 简单的方式：重新加载页面以应用正确的样式
-                }
+				if (newIsDesktop !== isDesktop) {
+					isDesktop = newIsDesktop;
+					if (topNav) {
+						if (isDesktop) {
+							topNav.classList.add('show');
+						} else {
+							topNav.classList.remove('show');
+						}
+					}
+				}
             });
         }
 
