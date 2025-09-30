@@ -4137,6 +4137,18 @@
             margin-top: 20px;
         }
 
+        /* 攻略预览按钮固定在底部 */
+        .preview-guide-content .preview-actions {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 15px 20px;
+            border-top: 1px solid #dee2e6;
+            margin-top: 0;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
         .preview-content {
             background: #f8f9fa;
             padding: 20px;
@@ -4678,12 +4690,26 @@
                 flex-shrink: 0;
                 background: white;
                 border-radius: 0 0 12px 12px;
+                position: sticky;
+                bottom: 0;
+                z-index: 10;
             }
 
             .preview-actions .btn {
                 width: 100%;
                 padding: 12px;
                 font-size: 16px;
+            }
+
+            /* 移动端攻略预览按钮优化 */
+            .preview-guide-content .preview-actions {
+                flex-direction: column-reverse;
+                gap: 10px;
+            }
+
+            .preview-guide-content .preview-actions .btn {
+                width: 100%;
+                margin: 0;
             }
 
             /* 确保模态框背景覆盖整个屏幕 */
