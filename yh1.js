@@ -1,5 +1,6 @@
-        // 全局
+        // 全局变量
         let currentPage = 'home'; // 当前页面
+
 
 
         // 页面切换功能
@@ -4280,12 +4281,12 @@
                 return;
             }
 
-            let html = notices.map(notice => `
-                <div class="message-item ${notice.read ? 'read' : 'unread'}" onclick="markNoticeAsRead('${notice.id}')">
+            let html = notices.map((notice, index) => `
+                <div class="message-item ${notice.read ? 'read' : 'unread'}" onclick="showNoticePreview('${notice.id}')" data-notice-index="${index}">
                     <div class="message-header">
                         <div class="message-time">${formatDateTime(notice.time)}</div>
                     </div>
-                    <div class="message-content">${escapeHtml(notice.content)}</div>
+                    <div class="message-content" data-content-id="notice-${notice.id}">${escapeHtml(notice.content)}</div>
                 </div>
             `).join('');
 
@@ -4299,6 +4300,23 @@
             }
 
             container.innerHTML = html;
+
+            // 渲染完成后检测每个通知内容是否超过2行
+            setTimeout(() => {
+                notices.forEach((notice, index) => {
+                    const contentEl = document.querySelector(`[data-content-id="notice-${notice.id}"]`);
+                    if (contentEl) {
+                        // 检测文本是否超过2行
+                        const lineHeight = parseFloat(getComputedStyle(contentEl).lineHeight);
+                        const height = contentEl.scrollHeight;
+                        const lines = Math.round(height / lineHeight);
+                        
+                        if (lines > 2 || contentEl.scrollHeight > contentEl.clientHeight) {
+                            contentEl.classList.add('truncated');
+                        }
+                    }
+                });
+            }, 100);
         }
 
         // 加载更多通知
@@ -4328,6 +4346,53 @@
             } catch (error) {
                 console.error('标记通知已读错误:', error);
             }
+        }
+
+        // 显示通知预览
+        async function showNoticePreview(noticeId) {
+            try {
+                // 从当前通知列表中找到对应的通知
+                const notice = allNotices.find(n => n.id === noticeId);
+                
+                if (!notice) {
+                    showNotification('通知不存在', 'error');
+                    return;
+                }
+
+                // 显示预览模态框
+                const previewModal = document.getElementById('notice-preview-modal');
+                const previewContent = document.getElementById('notice-preview-content');
+
+                previewContent.innerHTML = `
+                    <div class="notice-preview-detail">
+                        <div class="notice-preview-time">
+                            <i class="fas fa-clock"></i>
+                            ${formatDateTime(notice.time)}
+                        </div>
+                        <div class="notice-preview-text">
+                            ${escapeHtml(notice.content)}
+                        </div>
+                    </div>
+                `;
+
+                previewModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+
+                // 标记为已读
+                if (!notice.read) {
+                    await markNoticeAsRead(noticeId);
+                }
+            } catch (error) {
+                console.error('显示通知预览错误:', error);
+                showNotification('预览失败，请重试', 'error');
+            }
+        }
+
+        // 关闭通知预览模态框
+        function closeNoticePreviewModal() {
+            const modal = document.getElementById('notice-preview-modal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
 
         // 标记所有通知为已读
