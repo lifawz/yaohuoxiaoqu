@@ -1442,7 +1442,7 @@
             top: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #5dade2 0%, #3498db 100%);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255,255,255,0.1);
             display: none; /* 默认隐藏，在电脑端显示 */
