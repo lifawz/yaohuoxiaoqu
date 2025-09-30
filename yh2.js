@@ -4307,12 +4307,21 @@
                     const contentEl = document.querySelector(`[data-content-id="notice-${notice.id}"]`);
                     if (contentEl) {
                         // 检测内容是否被截断（scrollHeight大于clientHeight说明有内容被隐藏）
-                        if (contentEl.scrollHeight > contentEl.clientHeight + 2) {
+                        const scrollH = contentEl.scrollHeight;
+                        const clientH = contentEl.clientHeight;
+                        const isOverflowing = scrollH > clientH;
+                        
+                        // 调试输出
+                        console.log(`通知${notice.id}: scrollHeight=${scrollH}, clientHeight=${clientH}, isOverflowing=${isOverflowing}`);
+                        
+                        if (isOverflowing) {
                             contentEl.classList.add('truncated');
+                        } else {
+                            contentEl.classList.remove('truncated');
                         }
                     }
                 });
-            }, 100);
+            }, 150);
         }
 
         // 加载更多通知
