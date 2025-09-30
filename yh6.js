@@ -6377,15 +6377,21 @@
         }
 
         // 切换创建题目区域显示
-        function toggleCreateSection() {
+        function toggleCreateSection(event) {
+            // 阻止默认行为和事件冒泡
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
             const createSection = document.getElementById('brag-create-section');
             const createBtn = document.getElementById('create-question-btn');
 
-            if (createSection.style.display === 'none') {
+            if (createSection.style.display === 'none' || !createSection.style.display) {
                 // 检查登录状态
                 if (!userToken) {
                     showSimpleAlert('未登录', '请先登录后再发起挑战', null, 'warning', 'center');
-                    return;
+                    return false;
                 }
 
                 createSection.style.display = 'block';
@@ -6397,6 +6403,8 @@
                 createSection.style.display = 'none';
                 createBtn.style.display = 'block';
             }
+            
+            return false;
         }
 
         // 填充随机题目模板
