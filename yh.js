@@ -4301,17 +4301,13 @@
 
             container.innerHTML = html;
 
-            // 渲染完成后检测每个通知内容是否超过2行
+            // 渲染完成后检测每个通知内容是否超过显示高度
             setTimeout(() => {
                 notices.forEach((notice, index) => {
                     const contentEl = document.querySelector(`[data-content-id="notice-${notice.id}"]`);
                     if (contentEl) {
-                        // 检测文本是否超过2行
-                        const lineHeight = parseFloat(getComputedStyle(contentEl).lineHeight);
-                        const height = contentEl.scrollHeight;
-                        const lines = Math.round(height / lineHeight);
-                        
-                        if (lines > 2 || contentEl.scrollHeight > contentEl.clientHeight) {
+                        // 检测内容是否被截断（scrollHeight大于clientHeight说明有内容被隐藏）
+                        if (contentEl.scrollHeight > contentEl.clientHeight + 2) {
                             contentEl.classList.add('truncated');
                         }
                     }
@@ -4363,6 +4359,9 @@
                 const previewModal = document.getElementById('notice-preview-modal');
                 const previewContent = document.getElementById('notice-preview-content');
 
+                // 去掉内容前后的空白
+                const trimmedContent = (notice.content || '').trim();
+
                 previewContent.innerHTML = `
                     <div class="notice-preview-detail">
                         <div class="notice-preview-time">
@@ -4370,7 +4369,7 @@
                             ${formatDateTime(notice.time)}
                         </div>
                         <div class="notice-preview-text">
-                            ${escapeHtml(notice.content)}
+                            ${escapeHtml(trimmedContent)}
                         </div>
                     </div>
                 `;
