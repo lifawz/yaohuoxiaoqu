@@ -2349,7 +2349,6 @@
             .record-label {
                 min-width: 50px;
             }
-        }
 
             .form-row {
                 flex-direction: column;
@@ -5248,39 +5247,41 @@
         }
 
         .message-content {
-            line-height: 1.5;
+            line-height: 1.6;
             color: #2c3e50;
             word-wrap: break-word;
             word-break: break-all;
             overflow-wrap: break-word;
             white-space: pre-wrap;
-            max-height: 3em;
+            max-height: 3.2em;
             overflow: hidden;
             position: relative;
+            padding-right: 5px;
         }
 
         .message-content::after {
             content: '...点击查看更多';
             position: absolute;
-            right: 0;
+            right: 5px;
             bottom: 0;
-            background: linear-gradient(to right, transparent, #e8f4fd 50%);
-            padding-left: 40px;
+            background: linear-gradient(to right, transparent, #e8f4fd 60%);
+            padding-left: 50px;
             color: #3498db;
             font-size: 12px;
             display: none;
+            pointer-events: none;
         }
 
         .message-item.unread .message-content::after {
-            background: linear-gradient(to right, transparent, #e8f4fd 50%);
+            background: linear-gradient(to right, transparent, #e8f4fd 60%);
         }
 
         .message-item.read .message-content::after {
-            background: linear-gradient(to right, transparent, #f8f9fa 50%);
+            background: linear-gradient(to right, transparent, #f8f9fa 60%);
         }
 
         .message-content.truncated::after {
-            display: inline;
+            display: block;
         }
 
         .message-item.read .message-content {
