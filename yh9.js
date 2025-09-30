@@ -5723,6 +5723,15 @@
 
             // 如果是娱乐页面，刷新题目列表
             if (tabName === 'entertainment') {
+                // 重新绑定表单事件以防止页面刷新
+                const createForm = document.getElementById('brag-create-form');
+                if (createForm) {
+                    // 移除旧的事件监听器
+                    const newForm = createForm.cloneNode(true);
+                    createForm.parentNode.replaceChild(newForm, createForm);
+                    // 绑定新的事件监听器
+                    newForm.addEventListener('submit', handleCreateQuestion);
+                }
                 loadBragQuestions();
             }
         }
