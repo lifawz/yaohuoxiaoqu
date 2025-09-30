@@ -3517,8 +3517,26 @@
 
         // 关闭商品详情页面
         function closeItemDetail() {
-            // 返回到之前的页面
-            showPage(previousPage);
+            // 直接切换页面显示，不触发页面初始化逻辑
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            const targetPage = document.getElementById(previousPage + '-page');
+            if (targetPage) targetPage.classList.add('active');
+            
+            // 更新底部导航栏状态
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            const targetNavItem = Array.from(document.querySelectorAll('.nav-item')).find(item =>
+                item.getAttribute('onclick') && item.getAttribute('onclick').includes(previousPage)
+            );
+            if (targetNavItem) targetNavItem.classList.add('active');
+
+            // 更新顶部导航栏状态
+            document.querySelectorAll('.top-nav-item').forEach(item => item.classList.remove('active'));
+            const targetTopNavItem = Array.from(document.querySelectorAll('.top-nav-item')).find(item =>
+                item.getAttribute('onclick') && item.getAttribute('onclick').includes(previousPage)
+            );
+            if (targetTopNavItem) targetTopNavItem.classList.add('active');
+            
+            currentPage = previousPage;
             currentItemDetail = null;
         }
 
